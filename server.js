@@ -6,8 +6,8 @@ const app = express();
 // this tells our app to listen for GET messages on the '/' path
 // the callback function specifies what the server will do when a message is received
 app.get('/', (req, res) => {
-    console.log(req);
-    console.log(res);
+    //console.log(req);
+    //console.log(res);
     res.send('Hello!');
 });
 
