@@ -1,3 +1,6 @@
+// John Miles Ramos
+// CMSC 100 U5L - Web Server with ExpressJS
+
 import express from 'express';
 import { appendFileSync,readFile } from 'node:fs';
 
@@ -9,67 +12,86 @@ app.use(express.urlencoded({ extended: false }));
 // this tells our app to listen for GET messages on the '/' path
 // the callback function specifies what the server will do when a message is received
 
-// HOMEPAGE
+// GET Endpoint Homepage /
 app.get('/', (req, res) => {
-    //console.log(req);
-    //console.log(res);
-    res.send('Hello!');
+    res.send('Hello!'); // the server responds with 'Hello!'
 });
 
-// localhost:3000/greeting
-app.get('/greeting', (req, res) => {   // GET; ?name=Miles
+// GET Endpoint for /greeting
+app.get('/greeting', (req, res) => {   // Hello + provided name in the query
   res.send('Hello ' + req.query.name); //can be added to post 
 });
 
-// Endpoint for /find-by-author
-/*app.get('/find-by-author', (req,res) => {
-  //res.send('Author' + req.query.author);
-  readFile('book.txt', 'utf8', (err,data) =>{
+// GET Endpoint for /find-by-author
+// Server reads books.txt and sends all books written by the author provided from req.query.author
+app.get('/find-by-author', (req,res) => {
+  readFile('books.txt', 'utf8', (err,data) =>{
     if (err) throw err;
-    //console.log(data);
 
     var lines = data.split('\n');
     var result=[];
 
-    lines.forEach(line) => {
+    lines.forEach(line => {
       var line_element = line.split(',');
 
       if(line_element.indexOf(req.query.author) == 2){
         console.log('Found it: ' + line);
         result.push(line);
       }
-    }*/
-
-/* node request.js
-// Received a POST request from Monina
-app.post('/submit-data', (req, res) => {  //POST; {name: 'Monina'}
-    res.send('Received a POST request from ' + req.body.name);
-  });*/
- 
-
-//localhost:3000/add-book
-app.post('/add-book', (req, res) => {  //POST; {name: 'Harry Potter'}
-  res.send(req.body.name,req.body.isbn,req.body.author,req.body.year)
+    });
+    res.send(result);
+  });
 });
 
-// Function to add books
-function addBook([name, isbn, author, year]) {
-  //Checks if all the fields are present: first name, last name, and email are non-empty strings
-  // isEmail is added, and the age is at least 18
-  if (name && isbn && author && year){
-      // Let the data be written to books.txt
-      let data = `${name},${isbn},${author},${year}\n`;
-      // Append the data to users.txt
-      appendFileSync('books.txt', data);
-  }
-} 
-//res.send(req.body.name + req.body.isbn + req.body.author + req.body.year);
+// GET Endpoint for /find-by-isbn-author
+// Server reads books.txt and sends all books that match the ISBN and author provided from req.query
+app.get('/find-by-isbn-author', (req, res) => {
+  const { isbn, author } = req.query;
 
-//Append to books.txt
-addBook(["Harry Potter and the Philosopher’s Stone", "978-0-7475-3269-9", "J.K Rowling", 1997]);
-addBook(["Harry Potter and the Chamber of Secrets", "0-7475-3849-2", "J.K Rowling", 1998]);
-addBook(["The Little Prince", "978-0156012195", "Antoine Saint-Exupery", 1943]);
+  readFile('books.txt', 'utf8', (err, data) => {
+      if (err) throw err;
+
+      var lines = data.split('\n');
+      var result = [];
+
+      lines.forEach(line => {
+          var line_element = line.split(',');
+
+          if(line_element[1] === isbn && line_element[2] === author){
+              console.log('Found it: ' + line);
+              result.push(line);
+          }
+      });
+      res.send(result);
+  });
+});
+
+//POST Endpoint for adding a book
+// The server receives a book in the req.body and writes it to books.txt
+app.post('/add-book', (req, res) => {  //POST; {name: 'Harry Potter'}
+  const { name, isbn, author, year } = req.body;
+
+  //Writing into text file
+  if (name && isbn && author && year){
+    // Let the data be written to books.txt
+    let data = `${name},${isbn},${author},${year}\n`;
+    // Append the data to users.txt
+    appendFileSync('books.txt', data);
+  // The server responds with an object indicating whether the book was successfully added  
+    res.send({ success: true });
+  }
+  else {
+    res.send({ success: false });
+  }
+
+});
 
 // this tells our server to listen to the port 3000
 // we can also pass an optional callback function to execute after the server starts
 app.listen(3000, () => { console.log('Server started at port 3000')} );
+
+/*Expected Output:
+Server started at port 3000
+Found it: Harry Potter and the Philosopher’s Stone,978-0-7475-3269-9,J.K Rowling,1997
+Found it: Harry Potter and the Philosopher’s Stone,978-0-7475-3269-9,J.K Rowling,1997
+Found it: Harry Potter and the Chamber of Secrets,0-7475-3849-2,J.K Rowling,1998*/
