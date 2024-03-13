@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "express": "^4.18.3",
+    "needle": "^3.3.1"
+  },
+  "name": "ramosjm_exer5",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mairuzu1/ramosjm_exer5.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mairuzu1/ramosjm_exer5/issues"
+  },
+  "homepage": "https://github.com/Mairuzu1/ramosjm_exer5#readme",
+  "description": ""
+}
