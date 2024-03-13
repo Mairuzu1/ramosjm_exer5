@@ -11,6 +11,10 @@ app.get('/', (req, res) => {
     res.send('Hello!');
 });
 
+app.get('/greeting', (req, res) => {
+  res.send('Hello ' + req.query.name);
+});
+
 app.post('/submit-data', (req, res) => {
     res.send('Received a POST request.');
   });
